@@ -1,0 +1,1 @@
+enum TrangThaiO { trong, x, o }

@@ -1,0 +1,1 @@
+enum LoaiNguoiChoi { x, o }
