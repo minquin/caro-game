@@ -31,12 +31,7 @@ class WidgetThanhChan extends StatelessWidget {
             icon: const Icon(Icons.flag, color: Colors.white),
             label: const Text('Đầu Hàng', style: TextStyle(color: Colors.white)),
           ),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
-            onPressed: () => boDieuKhien.choiLai(),
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            label: const Text('Ván Mới', style: TextStyle(color: Colors.white)),
-          ),
+          // Đã xóa nút "Ván Mới" ở đây vì đã đưa lên AppBar góc trên bên phải!
         ],
       ),
     );
