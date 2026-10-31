@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
+  audioplayers: ^6.0.0 # Hoặc bản mới nhất phù hợp
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +19,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/sounds/
+    - assets/images/

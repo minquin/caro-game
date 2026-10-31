@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../utils/am_thanh_helper.dart';
 import '../core/enums/trang_thai_o.dart';
 import '../core/enums/loai_nguoi_choi.dart';
 
@@ -80,6 +81,7 @@ class DieuKhienTroChoi extends ChangeNotifier {
 
   void _xuLyHetGio() {
     if (troChoiKetThuc) return;
+    AmThanhHelper.phatAmThanh('lose.wav');
     troChoiKetThuc = true;
     NguoiChoi nguoiThang =
         (luotHienTai == nguoiChoi1) ? nguoiChoi2 : nguoiChoi1;
@@ -98,8 +100,16 @@ class DieuKhienTroChoi extends ChangeNotifier {
     NguoiChoi nguoiThang =
         (luotHienTai == nguoiChoi1) ? nguoiChoi2 : nguoiChoi1;
     nguoiThang.diemSo++;
-    thongBaoKetQua =
-        '${luotHienTai.tenHienThi} Đầu Hàng!\n${nguoiThang.tenHienThi} Chiến Thắng! 🎉';
+
+    // Nếu đấu với máy mà người chơi bấm đầu hàng -> Bạn thua, phát âm thanh lose
+    if (laDauVoiMay && luotHienTai == nguoiChoi1) {
+      thongBaoKetQua = 'Bạn đã Đầu Hàng và Thua cuộc! 😢';
+      AmThanhHelper.phatAmThanh('lose.wav');
+    } else {
+      thongBaoKetQua =
+          '${luotHienTai.tenHienThi} Đầu Hàng!\n${nguoiThang.tenHienThi} Chiến Thắng! 🎉';
+      AmThanhHelper.phatAmThanh('win.wav');
+    }
     notifyListeners();
   }
 
@@ -129,7 +139,18 @@ class DieuKhienTroChoi extends ChangeNotifier {
       troChoiKetThuc = true;
       _dongHoDemNguoc?.cancel();
       luotHienTai.diemSo++;
-      thongBaoKetQua = '${luotHienTai.tenHienThi} Chiến Thắng! 🎉';
+
+      // 🛠 XỬ LÝ KẾT QUẢ KHI CÓ NGƯỜI THẮNG
+      if (laDauVoiMay && luotHienTai == nguoiChoi2) {
+        // Máy (AI) thắng -> Xử lý thành Thua đối với người chơi
+        thongBaoKetQua = 'Bạn đã Thua mất rồi! 😢';
+        AmThanhHelper.phatAmThanh('lose.wav');
+      } else {
+        // Người chơi thắng hoặc chơi PvP bình thường
+        thongBaoKetQua = '${luotHienTai.tenHienThi} Chiến Thắng! 🎉';
+        AmThanhHelper.phatAmThanh('win.wav');
+      }
+
       notifyListeners();
       return;
     }
@@ -149,6 +170,7 @@ class DieuKhienTroChoi extends ChangeNotifier {
     if (laDauVoiMay && luotHienTai == nguoiChoi2 && !troChoiKetThuc) {
       _mayDanhAI();
     }
+    AmThanhHelper.phatAmThanh('click.wav');
   }
 
   bool kiemTraChienThang(int r, int c, TrangThaiO quan) {
@@ -230,9 +252,6 @@ class DieuKhienTroChoi extends ChangeNotifier {
     return true;
   }
 
-  // ==========================================================================
-  // 🤖 AI SIÊU CẤP: KIỂM TRA KHẨN CẤP + MINIMAX ALPHA-BETA
-  // ==========================================================================
   void _mayDanhAI() {
     Future.delayed(const Duration(milliseconds: 300), () {
       if (troChoiKetThuc) return;
@@ -262,7 +281,6 @@ class DieuKhienTroChoi extends ChangeNotifier {
         return;
       }
 
-      // 🚨 BƯỚC 1: AI THẤY CƠ HỘI CHIẾN THẮNG NGAY LẬP TỨC ➔ ĐÁNH LUÔN
       for (var o in oTrongs) {
         banCo[o.x][o.y] = quanAI;
         if (kiemTraChienThang(o.x, o.y, quanAI)) {
@@ -273,7 +291,6 @@ class DieuKhienTroChoi extends ChangeNotifier {
         banCo[o.x][o.y] = TrangThaiO.trong;
       }
 
-      // 🚨 BƯỚC 2: NGƯỜI CHƠI SẮP THẮNG Ở LƯỢT TIẾP THEO ➔ CHẶN ĐẦU NGAY LẬP TỨC
       for (var o in oTrongs) {
         banCo[o.x][o.y] = quanUser;
         if (kiemTraChienThang(o.x, o.y, quanUser)) {
@@ -284,7 +301,6 @@ class DieuKhienTroChoi extends ChangeNotifier {
         banCo[o.x][o.y] = TrangThaiO.trong;
       }
 
-      // 🧠 BƯỚC 3: DÙNG MINIMAX ĐỂ TÍNH TOÁN CHIẾN THUẬT SÂU HƠN
       Point<int>? nuocDiTotNhat;
       int diemCaoNhat = -9999999;
       int doSau = (banCo.length <= 5) ? 3 : 2;
@@ -378,7 +394,7 @@ class DieuKhienTroChoi extends ChangeNotifier {
   int _danhGiaToanBoBanCo(TrangThaiO quanAI, TrangThaiO quanUser) {
     int diemAI = _demTongChuoi(quanAI);
     int diemUser = _demTongChuoi(quanUser);
-    return diemAI - (diemUser * 150); // Tăng trọng số phòng thủ lên tối đa
+    return diemAI - (diemUser * 150);
   }
 
   int _demTongChuoi(TrangThaiO quan) {

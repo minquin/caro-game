@@ -5,7 +5,8 @@ import '../../core/constants/mau_sac_app.dart';
 class WidgetThanhChan extends StatelessWidget {
   final DieuKhienTroChoi boDieuKhien;
 
-  const WidgetThanhChan({Key? key, required this.boDieuKhien}) : super(key: key);
+  const WidgetThanhChan({Key? key, required this.boDieuKhien})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,8 @@ class WidgetThanhChan extends StatelessWidget {
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red[900]),
             onPressed: () => boDieuKhien.dauHang(),
             icon: const Icon(Icons.flag, color: Colors.white),
-            label: const Text('Đầu Hàng', style: TextStyle(color: Colors.white)),
+            label:
+                const Text('Đầu Hàng', style: TextStyle(color: Colors.white)),
           ),
           // Đã xóa nút "Ván Mới" ở đây vì đã đưa lên AppBar góc trên bên phải!
         ],
