@@ -47,7 +47,6 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: const Color(0xFF1E1E1E),
-          // Nới rộng chiều ngang tối thiểu của khung ra để không bị rớt dòng
           constraints: const BoxConstraints(minWidth: 330),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -145,13 +144,22 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
         ? '3x3 (Tic-Tac-Toe)'
         : '${widget.kichThuocBanCo}x${widget.kichThuocBanCo}';
 
+    // Lấy kích thước màn hình để nhận diện dạng dọc hay ngang ngay trên laptop
+    var screenSize = MediaQuery.of(context).size;
+    bool laManHinhDoc = screenSize.width < screenSize.height;
+
+    // Tự động đổi ảnh nền: Dọc dùng background2_mobile.png, Ngang dùng background2.png
+    String anhNen = laManHinhDoc
+        ? 'assets/images/background2_mobile.png'
+        : 'assets/images/background2.png';
+
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/background2.png'),
+            image: AssetImage(anhNen),
             fit: BoxFit.cover,
             alignment: Alignment.center,
           ),
