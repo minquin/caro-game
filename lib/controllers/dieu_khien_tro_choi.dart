@@ -166,7 +166,7 @@ class DieuKhienTroChoi extends ChangeNotifier {
       return;
     }
 
-    if (quanHienTai == TrangThaiO.x) {
+    if (quanHienTai == TrangThaiO.o) {
       AmThanhHelper.phatAmThanhQuanCo('15_E2.mp3');
     } else {
       AmThanhHelper.phatAmThanhQuanCo('16_F2.mp3');
