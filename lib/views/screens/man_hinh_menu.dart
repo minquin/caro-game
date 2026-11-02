@@ -23,14 +23,12 @@ class _ManHinhMenuState extends State<ManHinhMenu> {
 
   @override
   Widget build(BuildContext context) {
-    // 📱 Kiểm tra tỷ lệ màn hình để tự động đổi ảnh nền dọc hoặc ngang
     var screenSize = MediaQuery.of(context).size;
     bool laManHinhDoc = screenSize.width < screenSize.height;
 
     String anhNen = laManHinhDoc
-        ? 'assets/images/background_mobile.png' // Hoặc 'assets/images/background2_mobile.png' tùy file ảnh dọc của bồ
+        ? 'assets/images/background_mobile.png' // Hoặc tên file ảnh nền dọc menu của bà
         : 'assets/images/background.png';
-
     return Scaffold(
       body: Container(
         width: double.infinity,
