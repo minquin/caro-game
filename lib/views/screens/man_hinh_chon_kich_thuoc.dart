@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import '../../utils/am_thanh_helper.dart';
 import 'man_hinh_tro_choi.dart';
 
-class ManHinhChonKichThuoc extends StatelessWidget {
+class ManHinhChonKichThuoc extends StatefulWidget {
   final bool laDauVoiMay;
 
   const ManHinhChonKichThuoc({Key? key, required this.laDauVoiMay})
       : super(key: key);
 
+  @override
+  State<ManHinhChonKichThuoc> createState() => _ManHinhChonKichThuocState();
+}
+
+class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
   static const Color xanhDam = Color(0xFF1765C5);
   static const Color xanh = Color(0xFF3198F5);
   static const Color trang = Color(0xFFFFFFFF);
@@ -14,7 +20,7 @@ class ManHinhChonKichThuoc extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String tenCheDo =
-        laDauVoiMay ? 'Đấu với Máy (AI)' : 'Đấu 2 Người (PvP)';
+        widget.laDauVoiMay ? 'Đấu với Máy (AI)' : 'Đấu 2 Người (PvP)';
 
     return Scaffold(
       body: Container(
@@ -30,9 +36,8 @@ class ManHinhChonKichThuoc extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              // Thanh điều hướng trên cùng
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 20, 4),
+                padding: const EdgeInsets.fromLTRB(12, 8, 16, 4),
                 child: Row(
                   children: [
                     Material(
@@ -45,7 +50,10 @@ class ManHinhChonKichThuoc extends StatelessWidget {
                           color: xanhDam,
                           size: 28,
                         ),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          AmThanhHelper.phatAmThanh('GenericClick.mp3');
+                          Navigator.pop(context);
+                        },
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -59,6 +67,39 @@ class ManHinhChonKichThuoc extends StatelessWidget {
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                         ),
+                      ),
+                    ),
+                    Material(
+                      color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                      shape: const CircleBorder(),
+                      child: IconButton(
+                        tooltip: AmThanhHelper.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
+                        icon: Icon(
+                          AmThanhHelper.dangTatNhacNen ? Icons.music_off_rounded : Icons.music_note_rounded,
+                          color: xanhDam,
+                          size: 22,
+                        ),
+                        onPressed: () {
+                          AmThanhHelper.toggleNhacNen();
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Material(
+                      color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                      shape: const CircleBorder(),
+                      child: IconButton(
+                        tooltip: AmThanhHelper.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
+                        icon: Icon(
+                          AmThanhHelper.dangTatTiengClick ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                          color: xanhDam,
+                          size: 22,
+                        ),
+                        onPressed: () {
+                          AmThanhHelper.toggleTiengClick();
+                          setState(() {});
+                        },
                       ),
                     ),
                   ],
@@ -129,19 +170,19 @@ class ManHinhChonKichThuoc extends StatelessWidget {
             ),
           ),
           onPressed: () {
+            AmThanhHelper.phatAmThanh('GenericClick.mp3');
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (_) => ManHinhTroChoi(
                   kichThuocBanCo: kichThuoc,
-                  laDauVoiMay: laDauVoiMay,
+                  laDauVoiMay: widget.laDauVoiMay,
                 ),
               ),
             );
           },
           child: Row(
             children: [
-              // <-- Xóa chữ 'const' ở đây nhé!
               const Icon(
                 Icons.grid_view_rounded,
                 size: 31,
@@ -152,7 +193,6 @@ class ManHinhChonKichThuoc extends StatelessWidget {
                 child: Text(
                   tieuDe,
                   style: const TextStyle(
-                    // Chuyển const vào đây nếu muốn
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
                     color: xanhDam,

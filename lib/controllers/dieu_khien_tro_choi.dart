@@ -30,6 +30,10 @@ class DieuKhienTroChoi extends ChangeNotifier {
   bool laDauVoiMay = false;
   int soVanDau = 0;
 
+  // 🎯 Thêm 2 biến lưu tọa độ đầu và cuối để vẽ đường gạch chiến thắng
+  Point<int>? diemDauThang;
+  Point<int>? diemCuoiThang;
+
   DieuKhienTroChoi({required this.kichThuoc, this.laDauVoiMay = false}) {
     nguoiChoi1 =
         NguoiChoi(tenHienThi: 'Người chơi A', loaiQuan: LoaiNguoiChoi.x);
@@ -50,6 +54,8 @@ class DieuKhienTroChoi extends ChangeNotifier {
 
     troChoiKetThuc = false;
     thongBaoKetQua = '';
+    diemDauThang = null;
+    diemCuoiThang = null;
 
     _batDauDongHo();
     notifyListeners();
@@ -101,7 +107,6 @@ class DieuKhienTroChoi extends ChangeNotifier {
         (luotHienTai == nguoiChoi1) ? nguoiChoi2 : nguoiChoi1;
     nguoiThang.diemSo++;
 
-    // Nếu đấu với máy mà người chơi bấm đầu hàng -> Bạn thua, phát âm thanh lose
     if (laDauVoiMay && luotHienTai == nguoiChoi1) {
       thongBaoKetQua = 'Bạn đã Đầu Hàng và Thua cuộc! 😢';
       AmThanhHelper.phatAmThanh('lose.wav');
@@ -140,13 +145,10 @@ class DieuKhienTroChoi extends ChangeNotifier {
       _dongHoDemNguoc?.cancel();
       luotHienTai.diemSo++;
 
-      // 🛠 XỬ LÝ KẾT QUẢ KHI CÓ NGƯỜI THẮNG
       if (laDauVoiMay && luotHienTai == nguoiChoi2) {
-        // Máy (AI) thắng -> Xử lý thành Thua đối với người chơi
         thongBaoKetQua = 'Bạn đã Thua mất rồi! 😢';
         AmThanhHelper.phatAmThanh('lose.wav');
       } else {
-        // Người chơi thắng hoặc chơi PvP bình thường
         thongBaoKetQua = '${luotHienTai.tenHienThi} Chiến Thắng! 🎉';
         AmThanhHelper.phatAmThanh('win.wav');
       }
@@ -159,8 +161,15 @@ class DieuKhienTroChoi extends ChangeNotifier {
       troChoiKetThuc = true;
       _dongHoDemNguoc?.cancel();
       thongBaoKetQua = 'Ván đấu Hòa! 🤝';
+      AmThanhHelper.phatAmThanh('draw.mp3');
       notifyListeners();
       return;
+    }
+
+    if (quanHienTai == TrangThaiO.x) {
+      AmThanhHelper.phatAmThanhQuanCo('15_E2.mp3');
+    } else {
+      AmThanhHelper.phatAmThanhQuanCo('16_F2.mp3');
     }
 
     luotHienTai = (luotHienTai == nguoiChoi1) ? nguoiChoi2 : nguoiChoi1;
@@ -170,7 +179,6 @@ class DieuKhienTroChoi extends ChangeNotifier {
     if (laDauVoiMay && luotHienTai == nguoiChoi2 && !troChoiKetThuc) {
       _mayDanhAI();
     }
-    AmThanhHelper.phatAmThanh('click.wav');
   }
 
   bool kiemTraChienThang(int r, int c, TrangThaiO quan) {
@@ -222,23 +230,36 @@ class DieuKhienTroChoi extends ChangeNotifier {
       currC += dc;
     }
 
+    bool laThang = false;
     if (kichThuoc == 3) {
-      return length >= 3;
+      laThang = length >= 3;
+    } else {
+      int blockCount = 0;
+      int end1R = r1 - dr, end1C = c1 - dc;
+      if (end1R >= 0 && end1R < n && end1C >= 0 && end1C < n) {
+        if (banCo[end1R][end1C] == doiThu) blockCount++;
+      }
+
+      int end2R = r2 + dr, end2C = c2 + dc;
+      if (end2R >= 0 && end2R < n && end2C >= 0 && end2C < n) {
+        if (banCo[end2R][end2C] == doiThu) blockCount++;
+      }
+
+      if (kichThuoc == 5) {
+        if (length >= 5) laThang = true;
+        else if (blockCount == 0 && length >= 3) laThang = true;
+        else if (blockCount == 1 && length >= 4) laThang = true;
+      } else {
+        if (length == 4 && blockCount == 0) laThang = true;
+        if (length >= 5 && blockCount <= 1) laThang = true;
+      }
     }
 
-    int blockCount = 0;
-    int end1R = r1 - dr, end1C = c1 - dc;
-    if (end1R >= 0 && end1R < n && end1C >= 0 && end1C < n) {
-      if (banCo[end1R][end1C] == doiThu) blockCount++;
+    if (laThang) {
+      diemDauThang = Point(r1, c1);
+      diemCuoiThang = Point(r2, c2);
+      return true;
     }
-
-    int end2R = r2 + dr, end2C = c2 + dc;
-    if (end2R >= 0 && end2R < n && end2C >= 0 && end2C < n) {
-      if (banCo[end2R][end2C] == doiThu) blockCount++;
-    }
-
-    if (length == 4 && blockCount == 0) return true;
-    if (length >= 5 && blockCount <= 1) return true;
 
     return false;
   }
@@ -253,7 +274,25 @@ class DieuKhienTroChoi extends ChangeNotifier {
   }
 
   void _mayDanhAI() {
-    Future.delayed(const Duration(milliseconds: 300), () {
+    List<Point<int>> oTrongsTam = [];
+    for (int i = 0; i < banCo.length; i++) {
+      for (int j = 0; j < banCo[i].length; j++) {
+        if (banCo[i][j] == TrangThaiO.trong) {
+          if (_coQuanXungQuanh(i, j, 2)) {
+            oTrongsTam.add(Point(i, j));
+          }
+        }
+      }
+    }
+
+    int tongSoO = banCo.length * banCo.length;
+    int soOCoTheDi = oTrongsTam.isNotEmpty ? oTrongsTam.length : tongSoO;
+    double tyLeConLai = soOCoTheDi / tongSoO;
+    
+    int thoiGianSuyNghi = ((1.0 - tyLeConLai) * 1800 + 350).toInt();
+    thoiGianSuyNghi = thoiGianSuyNghi.clamp(300, 2500);
+
+    Future.delayed(Duration(milliseconds: thoiGianSuyNghi), () {
       if (troChoiKetThuc) return;
       if (!laDauVoiMay || luotHienTai != nguoiChoi2) return;
 
@@ -264,16 +303,13 @@ class DieuKhienTroChoi extends ChangeNotifier {
           ? TrangThaiO.x
           : TrangThaiO.o;
 
-      List<Point<int>> oTrongs = [];
-      for (int i = 0; i < banCo.length; i++) {
-        for (int j = 0; j < banCo[i].length; j++) {
-          if (banCo[i][j] == TrangThaiO.trong) {
-            if (banCo.length <= 5 || _coQuanXungQuanh(i, j, 2)) {
-              oTrongs.add(Point(i, j));
-            }
-          }
-        }
+      if (_laBanCoTrong()) {
+        int tam = banCo.length ~/ 2;
+        _thucHienNuocDi(tam, tam);
+        return;
       }
+
+      List<Point<int>> oTrongs = oTrongsTam;
 
       if (oTrongs.isEmpty) {
         int tam = banCo.length ~/ 2;
@@ -302,13 +338,13 @@ class DieuKhienTroChoi extends ChangeNotifier {
       }
 
       Point<int>? nuocDiTotNhat;
-      int diemCaoNhat = -9999999;
-      int doSau = (banCo.length <= 5) ? 3 : 2;
+      int diemCaoNhat = -99999999;
+      int doSau = (banCo.length <= 5) ? 4 : 3;
 
       for (var o in oTrongs) {
         banCo[o.x][o.y] = quanAI;
         int diem =
-            _minimax(doSau - 1, false, -10000000, 10000000, quanAI, quanUser);
+            _minimax(doSau - 1, false, -100000000, 100000000, quanAI, quanUser);
         banCo[o.x][o.y] = TrangThaiO.trong;
 
         if (diem > diemCaoNhat) {
@@ -324,6 +360,15 @@ class DieuKhienTroChoi extends ChangeNotifier {
         _thucHienNuocDi(fallback.x, fallback.y);
       }
     });
+  }
+
+  bool _laBanCoTrong() {
+    for (var hang in banCo) {
+      for (var o in hang) {
+        if (o != TrangThaiO.trong) return false;
+      }
+    }
+    return true;
   }
 
   int _minimax(int depth, bool isMaximizing, int alpha, int beta,
@@ -346,12 +391,12 @@ class DieuKhienTroChoi extends ChangeNotifier {
     if (oTrongs.isEmpty) return 0;
 
     if (isMaximizing) {
-      int maxEval = -10000000;
+      int maxEval = -100000000;
       for (var o in oTrongs) {
         banCo[o.x][o.y] = quanAI;
         if (kiemTraChienThang(o.x, o.y, quanAI)) {
           banCo[o.x][o.y] = TrangThaiO.trong;
-          return 1000000 + depth * 1000;
+          return 10000000 + depth * 1000;
         }
         int eval = _minimax(depth - 1, false, alpha, beta, quanAI, quanUser);
         banCo[o.x][o.y] = TrangThaiO.trong;
@@ -362,12 +407,12 @@ class DieuKhienTroChoi extends ChangeNotifier {
       }
       return maxEval;
     } else {
-      int minEval = 10000000;
+      int minEval = 100000000;
       for (var o in oTrongs) {
         banCo[o.x][o.y] = quanUser;
         if (kiemTraChienThang(o.x, o.y, quanUser)) {
           banCo[o.x][o.y] = TrangThaiO.trong;
-          return -1000000 - depth * 1000;
+          return -10000000 - depth * 1000;
         }
         int eval = _minimax(depth - 1, true, alpha, beta, quanAI, quanUser);
         banCo[o.x][o.y] = TrangThaiO.trong;
@@ -394,7 +439,7 @@ class DieuKhienTroChoi extends ChangeNotifier {
   int _danhGiaToanBoBanCo(TrangThaiO quanAI, TrangThaiO quanUser) {
     int diemAI = _demTongChuoi(quanAI);
     int diemUser = _demTongChuoi(quanUser);
-    return diemAI - (diemUser * 150);
+    return diemAI - (diemUser * 200);
   }
 
   int _demTongChuoi(TrangThaiO quan) {
@@ -418,10 +463,10 @@ class DieuKhienTroChoi extends ChangeNotifier {
               r += dir[0];
               c += dir[1];
             }
-            if (count == 2) tongDiem += 10;
-            if (count == 3) tongDiem += 1000;
-            if (count == 4) tongDiem += 50000;
-            if (count >= 5) tongDiem += 500000;
+            if (count == 2) tongDiem += 20;
+            if (count == 3) tongDiem += 2000;
+            if (count == 4) tongDiem += 100000;
+            if (count >= 5) tongDiem += 1000000;
           }
         }
       }

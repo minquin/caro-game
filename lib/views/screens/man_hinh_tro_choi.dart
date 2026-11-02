@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../controllers/dieu_khien_tro_choi.dart';
+import '../../utils/am_thanh_helper.dart';
 import '../widgets/widget_ban_co.dart';
 import '../widgets/widget_thanh_dau.dart';
 
@@ -75,6 +76,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                       ),
                       onPressed: () {
+                        AmThanhHelper.phatAmThanh('GenericClick.mp3');
                         Navigator.pop(context);
                       },
                       child: const Text(
@@ -102,6 +104,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                         ),
                       ),
                       onPressed: () {
+                        AmThanhHelper.phatAmThanh('GenericClick.mp3');
                         Navigator.pop(context);
                         setState(() {
                           _daHienThiDialog = false;
@@ -144,11 +147,9 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
         ? '3x3 (Tic-Tac-Toe)'
         : '${widget.kichThuocBanCo}x${widget.kichThuocBanCo}';
 
-    // Lấy kích thước màn hình để nhận diện dạng dọc hay ngang ngay trên laptop
     var screenSize = MediaQuery.of(context).size;
     bool laManHinhDoc = screenSize.width < screenSize.height;
 
-    // Tự động đổi ảnh nền: Dọc dùng background2_mobile.png, Ngang dùng background2.png
     String anhNen = laManHinhDoc
         ? 'assets/images/background2_mobile.png'
         : 'assets/images/background2.png';
@@ -170,14 +171,13 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
             builder: (context, child) {
               return Column(
                 children: [
-                  // Thanh điều hướng trên cùng
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 50),
+                          padding: const EdgeInsets.symmetric(horizontal: 110),
                           child: Text(
                             'Kích Thước: $tieuDeSize $tenCheDo',
                             maxLines: 1,
@@ -203,55 +203,97 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                                   color: xanhDam,
                                   size: 26,
                                 ),
-                                onPressed: () => Navigator.pop(context),
+                                onPressed: () {
+                                  AmThanhHelper.phatAmThanh('GenericClick.mp3');
+                                  Navigator.pop(context);
+                                },
                               ),
                             ),
-                            PopupMenuButton<String>(
-                              icon: Material(
-                                color:
-                                    const Color(0xFFEAF5FF).withOpacity(0.95),
-                                shape: const CircleBorder(),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(Icons.more_vert,
-                                      color: xanhDam, size: 22),
-                                ),
-                              ),
-                              onSelected: (value) {
-                                if (value == 'new_game') {
-                                  setState(() {
-                                    _daHienThiDialog = false;
-                                  });
-                                  _boDieuKhien.choiLai();
-                                } else if (value == 'reset_score') {
-                                  setState(() {
-                                    _daHienThiDialog = false;
-                                  });
-                                  _boDieuKhien.resetDiemSo();
-                                }
-                              },
-                              itemBuilder: (BuildContext context) => [
-                                const PopupMenuItem(
-                                  value: 'new_game',
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.refresh,
-                                          color: Colors.blueAccent, size: 20),
-                                      SizedBox(width: 10),
-                                      Text('Ván mới'),
-                                    ],
+                            Row(
+                              children: [
+                                Material(
+                                  color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                                  shape: const CircleBorder(),
+                                  child: IconButton(
+                                    tooltip: AmThanhHelper.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
+                                    icon: Icon(
+                                      AmThanhHelper.dangTatNhacNen ? Icons.music_off_rounded : Icons.music_note_rounded,
+                                      color: xanhDam,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+                                      AmThanhHelper.toggleNhacNen();
+                                      setState(() {});
+                                    },
                                   ),
                                 ),
-                                const PopupMenuItem(
-                                  value: 'reset_score',
-                                  child: Row(
-                                    children: [
-                                      Icon(Icons.delete_sweep,
-                                          color: Colors.redAccent, size: 20),
-                                      SizedBox(width: 10),
-                                      Text('Xóa điểm & Ván mới'),
-                                    ],
+                                const SizedBox(width: 4),
+                                Material(
+                                  color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                                  shape: const CircleBorder(),
+                                  child: IconButton(
+                                    tooltip: AmThanhHelper.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
+                                    icon: Icon(
+                                      AmThanhHelper.dangTatTiengClick ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                                      color: xanhDam,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+                                      AmThanhHelper.toggleTiengClick();
+                                      setState(() {});
+                                    },
                                   ),
+                                ),
+                                const SizedBox(width: 4),
+                                PopupMenuButton<String>(
+                                  icon: Material(
+                                    color:
+                                        const Color(0xFFEAF5FF).withOpacity(0.95),
+                                    shape: const CircleBorder(),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Icon(Icons.more_vert,
+                                          color: xanhDam, size: 22),
+                                    ),
+                                  ),
+                                  onSelected: (value) {
+                                    AmThanhHelper.phatAmThanh('GenericClick.mp3');
+                                    if (value == 'new_game') {
+                                      setState(() {
+                                        _daHienThiDialog = false;
+                                      });
+                                      _boDieuKhien.choiLai();
+                                    } else if (value == 'reset_score') {
+                                      setState(() {
+                                        _daHienThiDialog = false;
+                                      });
+                                      _boDieuKhien.resetDiemSo();
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) => [
+                                    const PopupMenuItem(
+                                      value: 'new_game',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.refresh,
+                                              color: Colors.blueAccent, size: 20),
+                                          SizedBox(width: 10),
+                                          Text('Ván mới'),
+                                        ],
+                                      ),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: 'reset_score',
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.delete_sweep,
+                                              color: Colors.redAccent, size: 20),
+                                          SizedBox(width: 10),
+                                          Text('Xóa điểm & Ván mới'),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -260,11 +302,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                       ],
                     ),
                   ),
-
-                  // Thanh đầu hiển thị tỉ số, lượt đánh và thời gian đếm ngược
                   WidgetThanhDau(boDieuKhien: _boDieuKhien),
-
-                  // Bàn cờ chính
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -276,8 +314,6 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                       ),
                     ),
                   ),
-
-                  // Thanh điều khiển ở đáy: Giữ lại độc quyền nút Đầu Hàng
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                     child: Container(
@@ -322,6 +358,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                                 ),
                               ),
                               onPressed: () {
+                                AmThanhHelper.phatAmThanh('GenericClick.mp3');
                                 if (_boDieuKhien.troChoiKetThuc) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

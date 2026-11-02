@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import '../../utils/am_thanh_helper.dart';
 import 'man_hinh_chon_kich_thuoc.dart';
 
-class ManHinhMenu extends StatelessWidget {
+class ManHinhMenu extends StatefulWidget {
   const ManHinhMenu({Key? key}) : super(key: key);
+
+  @override
+  State<ManHinhMenu> createState() => _ManHinhMenuState();
+}
+
+class _ManHinhMenuState extends State<ManHinhMenu> {
+  @override
+  void initState() {
+    super.initState();
+    AmThanhHelper.phatNhacNen('PG_4_vol0.15.mp3');
+  }
 
   static const Color xanhDam = Color(0xFF1765C5);
   static const Color xanh = Color(0xFF3198F5);
@@ -23,9 +35,50 @@ class ManHinhMenu extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Center(
+          child: Stack(
+            children: [
+              Positioned(
+                top: 12,
+                right: 16,
+                child: Row(
+                  children: [
+                    Material(
+                      color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                      shape: const CircleBorder(),
+                      child: IconButton(
+                        tooltip: AmThanhHelper.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
+                        icon: Icon(
+                          AmThanhHelper.dangTatNhacNen ? Icons.music_off_rounded : Icons.music_note_rounded,
+                          color: xanhDam,
+                          size: 24,
+                        ),
+                        onPressed: () {
+                          AmThanhHelper.toggleNhacNen();
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Material(
+                      color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                      shape: const CircleBorder(),
+                      child: IconButton(
+                        tooltip: AmThanhHelper.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
+                        icon: Icon(
+                          AmThanhHelper.dangTatTiengClick ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                          color: xanhDam,
+                          size: 24,
+                        ),
+                        onPressed: () {
+                          AmThanhHelper.toggleTiengClick();
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Center(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
@@ -58,8 +111,8 @@ class ManHinhMenu extends StatelessWidget {
                     ),
                   ),
                 ),
-              );
-            },
+              ),
+            ],
           ),
         ),
       ),
@@ -90,6 +143,7 @@ class ManHinhMenu extends StatelessWidget {
           ),
         ),
         onPressed: () {
+          AmThanhHelper.phatAmThanh('GenericClick.mp3');
           Navigator.push(
             context,
             MaterialPageRoute(

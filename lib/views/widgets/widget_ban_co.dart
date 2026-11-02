@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../controllers/dieu_khien_tro_choi.dart';
 import 'widget_o_co.dart';
+import 've_duong_thang.dart'; // 🎨 Nhớ import file vẽ đường thẳng vừa tạo vào
 
 class WidgetBanCo extends StatelessWidget {
   final DieuKhienTroChoi boDieuKhien;
@@ -40,22 +41,44 @@ class WidgetBanCo extends StatelessWidget {
         borderRadius: BorderRadius.circular(13),
         child: Container(
           padding: const EdgeInsets.all(4),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(kichThuoc, (y) {
-              return Row(
+          // 🎯 Bọc bàn cờ trong Stack để chồng lớp vẽ đường gạch chiến thắng lên trên
+          child: Stack(
+            children: [
+              // 1. Cột các hàng ô cờ của bàn cờ
+              Column(
                 mainAxisSize: MainAxisSize.min,
-                children: List.generate(kichThuoc, (x) {
-                  return WidgetOCo(
-                    trangThai: boDieuKhien.banCo[y][x],
-                    kichThuoc: kichThuocOCo, // Truyền kích thước động vào ô cờ
-                    khiNhan: () {
-                      boDieuKhien.xuLyNuocDi(y, x);
-                    },
+                children: List.generate(kichThuoc, (y) {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(kichThuoc, (x) {
+                      return WidgetOCo(
+                        trangThai: boDieuKhien.banCo[y][x],
+                        kichThuoc: kichThuocOCo,
+                        khiNhan: () {
+                          boDieuKhien.xuLyNuocDi(y, x);
+                        },
+                      );
+                    }),
                   );
                 }),
-              );
-            }),
+              ),
+
+              // 2. 🎨 Lớp gạch ngang chiến thắng đè lên trên cùng khi trò chơi kết thúc
+              if (boDieuKhien.troChoiKetThuc &&
+                  boDieuKhien.diemDauThang != null &&
+                  boDieuKhien.diemCuoiThang != null)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: CustomPaint(
+                      painter: VeDuongThangThangCuoc(
+                        diemDau: boDieuKhien.diemDauThang!,
+                        diemCuoi: boDieuKhien.diemCuoiThang!,
+                        kichThuocBanCo: kichThuoc,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),
