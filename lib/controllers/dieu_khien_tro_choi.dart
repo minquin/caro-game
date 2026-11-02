@@ -167,9 +167,9 @@ class DieuKhienTroChoi extends ChangeNotifier {
     }
 
     if (quanHienTai == TrangThaiO.x) {
-      AmThanhHelper.phatAmThanhQuanCo('15_F2.mp3');
+      AmThanhHelper.phatAmThanhQuanCo('15_E2.mp3');
     } else {
-      AmThanhHelper.phatAmThanhQuanCo('16_E2.mp3');
+      AmThanhHelper.phatAmThanhQuanCo('16_F2.mp3');
     }
 
     luotHienTai = (luotHienTai == nguoiChoi1) ? nguoiChoi2 : nguoiChoi1;
