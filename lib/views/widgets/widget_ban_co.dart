@@ -17,7 +17,7 @@ class WidgetBanCo extends StatelessWidget {
   Widget build(BuildContext context) {
     int kichThuoc = boDieuKhien.banCo.length;
 
-    // Tính kích thước ô cờ sao cho tổng bàn cờ 3x3, 5x5... to bằng bàn cờ 15x15 (tổng ~600px)
+    // Keep every board size within the same overall display area.
     double tongKichThuocMucTieu = 600.0;
     double kichThuocOCo = tongKichThuocMucTieu / kichThuoc;
 

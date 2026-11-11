@@ -143,9 +143,8 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
   @override
   Widget build(BuildContext context) {
     String tenCheDo = widget.laDauVoiMay ? '(VS AI)' : '(PvP)';
-    String tieuDeSize = widget.kichThuocBanCo == 3
-        ? '3x3 (Tic-Tac-Toe)'
-        : '${widget.kichThuocBanCo}x${widget.kichThuocBanCo}';
+    String tieuDeSize =
+        '${widget.kichThuocBanCo}x${widget.kichThuocBanCo}';
 
     var screenSize = MediaQuery.of(context).size;
     bool laManHinhDoc = screenSize.width < screenSize.height;

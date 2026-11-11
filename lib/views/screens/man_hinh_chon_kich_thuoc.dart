@@ -124,12 +124,6 @@ class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const SizedBox(height: 120),
-                              _taoNutSize(
-                                context,
-                                'Bàn cờ 3x3 (Tic-Tac-Toe)',
-                                3,
-                              ),
-                              _taoNutSize(context, 'Bàn cờ 5x5', 5),
                               _taoNutSize(context, 'Bàn cờ 7x7', 7),
                               _taoNutSize(context, 'Bàn cờ 10x10', 10),
                               _taoNutSize(context, 'Bàn cờ 15x15', 15),

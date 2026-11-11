@@ -12,14 +12,11 @@ class BoXuLyLuat {
       [1, -1], // Chéo phụ
     ];
 
-    final laBanCo3x3 = banCo.kichThuoc == 3;
-
     for (var huong in huongQuet) {
       int dx = huong[0];
       int dy = huong[1];
 
       int soQuanLienTiep = 1;
-      int soDauBiChan = 0;
 
       // Quét hướng dương (+)
       int buoc = 1;
@@ -39,7 +36,6 @@ class BoXuLyLuat {
         } else if (trangThai == TrangThaiO.trong) {
           break; // Đầu mở
         } else {
-          soDauBiChan++; // Bị quân đối phương chặn
           break;
         }
       }
@@ -62,20 +58,11 @@ class BoXuLyLuat {
         } else if (trangThai == TrangThaiO.trong) {
           break; // Đầu mở
         } else {
-          soDauBiChan++; // Bị quân đối phương chặn
           break;
         }
       }
 
-      // ĐÁNH GIÁ ĐIỀU KIỆN THẮNG
-      if (laBanCo3x3) {
-        if (soQuanLienTiep >= 3) return true;
-      } else {
-        // Luật 4 quân không bị chặn
-        if (soQuanLienTiep == 4 && soDauBiChan == 0) return true;
-        // Luật 5 quân không bị chặn 2 đầu
-        if (soQuanLienTiep >= 5 && soDauBiChan < 2) return true;
-      }
+      if (soQuanLienTiep >= 5) return true;
     }
 
     return false;

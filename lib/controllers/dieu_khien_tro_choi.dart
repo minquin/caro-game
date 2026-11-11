@@ -14,7 +14,7 @@ class NguoiChoi {
 }
 
 class DieuKhienTroChoi extends ChangeNotifier {
-  final int kichThuoc; // Kích thước cố định (3, 5, 7, 10, 15)
+  final int kichThuoc; // Kích thước cố định (7, 10, 15)
   late List<List<TrangThaiO>> banCo;
 
   late NguoiChoi nguoiChoi1;
@@ -182,7 +182,6 @@ class DieuKhienTroChoi extends ChangeNotifier {
   }
 
   bool kiemTraChienThang(int r, int c, TrangThaiO quan) {
-    TrangThaiO doiThu = (quan == TrangThaiO.x) ? TrangThaiO.o : TrangThaiO.x;
     List<List<int>> directions = [
       [0, 1],
       [1, 0],
@@ -191,7 +190,7 @@ class DieuKhienTroChoi extends ChangeNotifier {
     ];
 
     for (var dir in directions) {
-      if (_kiemTraDuongThang(r, c, dir[0], dir[1], quan, doiThu)) {
+      if (_kiemTraDuongThang(r, c, dir[0], dir[1], quan)) {
         return true;
       }
     }
@@ -199,7 +198,7 @@ class DieuKhienTroChoi extends ChangeNotifier {
   }
 
   bool _kiemTraDuongThang(
-      int r, int c, int dr, int dc, TrangThaiO quan, TrangThaiO doiThu) {
+      int r, int c, int dr, int dc, TrangThaiO quan) {
     int n = banCo.length;
     int r1 = r, c1 = c;
     while (r1 - dr >= 0 &&
@@ -230,32 +229,7 @@ class DieuKhienTroChoi extends ChangeNotifier {
       currC += dc;
     }
 
-    bool laThang = false;
-    if (kichThuoc == 3) {
-      laThang = length >= 3;
-    } else {
-      int blockCount = 0;
-      int end1R = r1 - dr, end1C = c1 - dc;
-      if (end1R >= 0 && end1R < n && end1C >= 0 && end1C < n) {
-        if (banCo[end1R][end1C] == doiThu) blockCount++;
-      }
-
-      int end2R = r2 + dr, end2C = c2 + dc;
-      if (end2R >= 0 && end2R < n && end2C >= 0 && end2C < n) {
-        if (banCo[end2R][end2C] == doiThu) blockCount++;
-      }
-
-      if (kichThuoc == 5) {
-        if (length >= 5) laThang = true;
-        else if (blockCount == 0 && length >= 3) laThang = true;
-        else if (blockCount == 1 && length >= 4) laThang = true;
-      } else {
-        if (length == 4 && blockCount == 0) laThang = true;
-        if (length >= 5 && blockCount <= 1) laThang = true;
-      }
-    }
-
-    if (laThang) {
+    if (length >= 5) {
       diemDauThang = Point(r1, c1);
       diemCuoiThang = Point(r2, c2);
       return true;
@@ -274,23 +248,21 @@ class DieuKhienTroChoi extends ChangeNotifier {
   }
 
   void _mayDanhAI() {
-    List<Point<int>> oTrongsTam = [];
-    for (int i = 0; i < banCo.length; i++) {
-      for (int j = 0; j < banCo[i].length; j++) {
-        if (banCo[i][j] == TrangThaiO.trong) {
-          if (_coQuanXungQuanh(i, j, 2)) {
-            oTrongsTam.add(Point(i, j));
-          }
+    final oUngVien = <Point<int>>[];
+    for (var r = 0; r < banCo.length; r++) {
+      for (var c = 0; c < banCo[r].length; c++) {
+        if (banCo[r][c] == TrangThaiO.trong &&
+            _coQuanXungQuanh(r, c, 2)) {
+          oUngVien.add(Point(r, c));
         }
       }
     }
 
-    int tongSoO = banCo.length * banCo.length;
-    int soOCoTheDi = oTrongsTam.isNotEmpty ? oTrongsTam.length : tongSoO;
-    double tyLeConLai = soOCoTheDi / tongSoO;
-    
-    int thoiGianSuyNghi = ((1.0 - tyLeConLai) * 1800 + 350).toInt();
-    thoiGianSuyNghi = thoiGianSuyNghi.clamp(300, 2500);
+    final thoiGianSuyNghi =
+        ((oUngVien.length / (banCo.length * banCo.length)) * 700 + 350)
+            .round()
+            .clamp(350, 1050)
+            .toInt();
 
     Future.delayed(Duration(milliseconds: thoiGianSuyNghi), () {
       if (troChoiKetThuc) return;
@@ -303,21 +275,13 @@ class DieuKhienTroChoi extends ChangeNotifier {
           ? TrangThaiO.x
           : TrangThaiO.o;
 
-      if (_laBanCoTrong()) {
-        int tam = banCo.length ~/ 2;
+      if (oUngVien.isEmpty) {
+        final tam = banCo.length ~/ 2;
         _thucHienNuocDi(tam, tam);
         return;
       }
 
-      List<Point<int>> oTrongs = oTrongsTam;
-
-      if (oTrongs.isEmpty) {
-        int tam = banCo.length ~/ 2;
-        _thucHienNuocDi(tam, tam);
-        return;
-      }
-
-      for (var o in oTrongs) {
+      for (final o in oUngVien) {
         banCo[o.x][o.y] = quanAI;
         if (kiemTraChienThang(o.x, o.y, quanAI)) {
           banCo[o.x][o.y] = TrangThaiO.trong;
@@ -327,7 +291,7 @@ class DieuKhienTroChoi extends ChangeNotifier {
         banCo[o.x][o.y] = TrangThaiO.trong;
       }
 
-      for (var o in oTrongs) {
+      for (final o in oUngVien) {
         banCo[o.x][o.y] = quanUser;
         if (kiemTraChienThang(o.x, o.y, quanUser)) {
           banCo[o.x][o.y] = TrangThaiO.trong;
@@ -337,15 +301,24 @@ class DieuKhienTroChoi extends ChangeNotifier {
         banCo[o.x][o.y] = TrangThaiO.trong;
       }
 
-      Point<int>? nuocDiTotNhat;
-      int diemCaoNhat = -99999999;
-      int doSau = (banCo.length <= 5) ? 4 : 3;
+      Point<int> nuocDiTotNhat = oUngVien.first;
+      var diemCaoNhat = -1;
+      final tamBanCo = (banCo.length - 1) / 2;
 
-      for (var o in oTrongs) {
+      for (final o in oUngVien) {
         banCo[o.x][o.y] = quanAI;
-        int diem =
-            _minimax(doSau - 1, false, -100000000, 100000000, quanAI, quanUser);
+        final diemTanCong = _danhGiaNuocTai(o.x, o.y);
         banCo[o.x][o.y] = TrangThaiO.trong;
+
+        banCo[o.x][o.y] = quanUser;
+        final diemPhongThu = _danhGiaNuocTai(o.x, o.y);
+        banCo[o.x][o.y] = TrangThaiO.trong;
+
+        final khoangCachDenTam =
+            (o.x - tamBanCo).abs() + (o.y - tamBanCo).abs();
+        final diem = diemTanCong +
+            (diemPhongThu * 1.1).round() -
+            khoangCachDenTam.round();
 
         if (diem > diemCaoNhat) {
           diemCaoNhat = diem;
@@ -353,76 +326,59 @@ class DieuKhienTroChoi extends ChangeNotifier {
         }
       }
 
-      if (nuocDiTotNhat != null) {
-        _thucHienNuocDi(nuocDiTotNhat.x, nuocDiTotNhat.y);
-      } else {
-        Point<int> fallback = oTrongs[Random().nextInt(oTrongs.length)];
-        _thucHienNuocDi(fallback.x, fallback.y);
-      }
+      _thucHienNuocDi(nuocDiTotNhat.x, nuocDiTotNhat.y);
     });
   }
 
-  bool _laBanCoTrong() {
-    for (var hang in banCo) {
-      for (var o in hang) {
-        if (o != TrangThaiO.trong) return false;
-      }
-    }
-    return true;
-  }
+  int _danhGiaNuocTai(int r, int c) {
+    const directions = [
+      [0, 1],
+      [1, 0],
+      [1, 1],
+      [1, -1],
+    ];
+    var diem = 0;
+    final n = banCo.length;
 
-  int _minimax(int depth, bool isMaximizing, int alpha, int beta,
-      TrangThaiO quanAI, TrangThaiO quanUser) {
-    if (depth == 0) {
-      return _danhGiaToanBoBanCo(quanAI, quanUser);
-    }
+    for (final direction in directions) {
+      final dr = direction[0];
+      final dc = direction[1];
+      var soQuan = 1;
+      var dauMo = 0;
 
-    List<Point<int>> oTrongs = [];
-    for (int i = 0; i < banCo.length; i++) {
-      for (int j = 0; j < banCo[i].length; j++) {
-        if (banCo[i][j] == TrangThaiO.trong) {
-          if (_coQuanXungQuanh(i, j, 2)) {
-            oTrongs.add(Point(i, j));
-          }
+      for (final huong in [-1, 1]) {
+        var rKe = r + dr * huong;
+        var cKe = c + dc * huong;
+        while (rKe >= 0 &&
+            rKe < n &&
+            cKe >= 0 &&
+            cKe < n &&
+            banCo[rKe][cKe] == banCo[r][c]) {
+          soQuan++;
+          rKe += dr * huong;
+          cKe += dc * huong;
+        }
+        if (rKe >= 0 &&
+            rKe < n &&
+            cKe >= 0 &&
+            cKe < n &&
+            banCo[rKe][cKe] == TrangThaiO.trong) {
+          dauMo++;
         }
       }
-    }
 
-    if (oTrongs.isEmpty) return 0;
-
-    if (isMaximizing) {
-      int maxEval = -100000000;
-      for (var o in oTrongs) {
-        banCo[o.x][o.y] = quanAI;
-        if (kiemTraChienThang(o.x, o.y, quanAI)) {
-          banCo[o.x][o.y] = TrangThaiO.trong;
-          return 10000000 + depth * 1000;
-        }
-        int eval = _minimax(depth - 1, false, alpha, beta, quanAI, quanUser);
-        banCo[o.x][o.y] = TrangThaiO.trong;
-
-        maxEval = max(maxEval, eval);
-        alpha = max(alpha, eval);
-        if (beta <= alpha) break;
+      if (soQuan >= 5) return 1000000000;
+      if (soQuan == 4) {
+        diem += dauMo == 2 ? 10000000 : (dauMo == 1 ? 1000000 : 0);
+      } else if (soQuan == 3) {
+        diem += dauMo == 2 ? 100000 : (dauMo == 1 ? 10000 : 0);
+      } else if (soQuan == 2) {
+        diem += dauMo == 2 ? 1000 : (dauMo == 1 ? 100 : 0);
+      } else if (soQuan == 1 && dauMo > 0) {
+        diem += 10;
       }
-      return maxEval;
-    } else {
-      int minEval = 100000000;
-      for (var o in oTrongs) {
-        banCo[o.x][o.y] = quanUser;
-        if (kiemTraChienThang(o.x, o.y, quanUser)) {
-          banCo[o.x][o.y] = TrangThaiO.trong;
-          return -10000000 - depth * 1000;
-        }
-        int eval = _minimax(depth - 1, true, alpha, beta, quanAI, quanUser);
-        banCo[o.x][o.y] = TrangThaiO.trong;
-
-        minEval = min(minEval, eval);
-        beta = min(beta, eval);
-        if (beta <= alpha) break;
-      }
-      return minEval;
     }
+    return diem;
   }
 
   bool _coQuanXungQuanh(int r, int c, int banKinh) {
@@ -434,44 +390,6 @@ class DieuKhienTroChoi extends ChangeNotifier {
       }
     }
     return false;
-  }
-
-  int _danhGiaToanBoBanCo(TrangThaiO quanAI, TrangThaiO quanUser) {
-    int diemAI = _demTongChuoi(quanAI);
-    int diemUser = _demTongChuoi(quanUser);
-    return diemAI - (diemUser * 200);
-  }
-
-  int _demTongChuoi(TrangThaiO quan) {
-    int tongDiem = 0;
-    int n = banCo.length;
-    List<List<int>> directions = [
-      [0, 1],
-      [1, 0],
-      [1, 1],
-      [1, -1]
-    ];
-
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        if (banCo[i][j] == quan) {
-          for (var dir in directions) {
-            int count = 1;
-            int r = i + dir[0], c = j + dir[1];
-            while (r >= 0 && r < n && c >= 0 && c < n && banCo[r][c] == quan) {
-              count++;
-              r += dir[0];
-              c += dir[1];
-            }
-            if (count == 2) tongDiem += 20;
-            if (count == 3) tongDiem += 2000;
-            if (count == 4) tongDiem += 100000;
-            if (count >= 5) tongDiem += 1000000;
-          }
-        }
-      }
-    }
-    return tongDiem;
   }
 
   void resetDiemSo() {
