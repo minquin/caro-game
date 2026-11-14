@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../controllers/dieu_khien_tro_choi.dart';
 import '../../core/constants/mau_sac_app.dart';
 
+/// Thanh thao tac chi nhan callback tu man hinh, khong phu thuoc Controller.
 class WidgetThanhChan extends StatelessWidget {
-  final DieuKhienTroChoi boDieuKhien;
+  final VoidCallback onXinHoa;
+  final VoidCallback onDauHang;
 
-  const WidgetThanhChan({Key? key, required this.boDieuKhien})
-      : super(key: key);
+  const WidgetThanhChan({
+    Key? key,
+    required this.onXinHoa,
+    required this.onDauHang,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,22 +22,16 @@ class WidgetThanhChan extends StatelessWidget {
         children: [
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[800]),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Đã gửi lời đề nghị Xin Hòa!')),
-              );
-            },
+            onPressed: onXinHoa,
             icon: const Icon(Icons.handshake, color: Colors.white),
             label: const Text('Xin Hòa', style: TextStyle(color: Colors.white)),
           ),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red[900]),
-            onPressed: () => boDieuKhien.dauHang(),
+            onPressed: onDauHang,
             icon: const Icon(Icons.flag, color: Colors.white),
-            label:
-                const Text('Đầu Hàng', style: TextStyle(color: Colors.white)),
+            label: const Text('Đầu Hàng', style: TextStyle(color: Colors.white)),
           ),
-          // Đã xóa nút "Ván Mới" ở đây vì đã đưa lên AppBar góc trên bên phải!
         ],
       ),
     );

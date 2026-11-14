@@ -1,85 +1,61 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
-import '../../controllers/dieu_khien_tro_choi.dart';
+import '../../core/enums/trang_thai_o.dart';
 import 'widget_o_co.dart';
-import 've_duong_thang.dart'; // 🎨 Nhớ import file vẽ đường thẳng vừa tạo vào
+import 've_duong_thang.dart';
 
+/// Widget hiển thị bàn cờ. Không phụ thuộc trực tiếp vào Controller.
 class WidgetBanCo extends StatelessWidget {
-  final DieuKhienTroChoi boDieuKhien;
+  final List<List<TrangThaiO>> banCo;
+  final bool troChoiKetThuc;
+  final Point<int>? diemDauThang;
+  final Point<int>? diemCuoiThang;
+  final void Function(int hang, int cot) khiChonO;
 
   const WidgetBanCo({
     Key? key,
-    required this.boDieuKhien,
+    required this.banCo,
+    required this.troChoiKetThuc,
+    required this.diemDauThang,
+    required this.diemCuoiThang,
+    required this.khiChonO,
   }) : super(key: key);
 
   static const Color xanhDam = Color(0xFF1765C5);
 
   @override
   Widget build(BuildContext context) {
-    int kichThuoc = boDieuKhien.banCo.length;
-
-    // Keep every board size within the same overall display area.
-    double tongKichThuocMucTieu = 600.0;
-    double kichThuocOCo = tongKichThuocMucTieu / kichThuoc;
+    final int kichThuoc = banCo.length;
+    final double kichThuocOCo = 600.0 / kichThuoc;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.4),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: xanhDam,
-          width: 3.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        border: Border.all(color: xanhDam, width: 3.5),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(13),
         child: Container(
           padding: const EdgeInsets.all(4),
-          // 🎯 Bọc bàn cờ trong Stack để chồng lớp vẽ đường gạch chiến thắng lên trên
-          child: Stack(
-            children: [
-              // 1. Cột các hàng ô cờ của bàn cờ
-              Column(
+          child: Stack(children: [
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(kichThuoc, (hang) => Row(
                 mainAxisSize: MainAxisSize.min,
-                children: List.generate(kichThuoc, (y) {
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(kichThuoc, (x) {
-                      return WidgetOCo(
-                        trangThai: boDieuKhien.banCo[y][x],
-                        kichThuoc: kichThuocOCo,
-                        khiNhan: () {
-                          boDieuKhien.xuLyNuocDi(y, x);
-                        },
-                      );
-                    }),
-                  );
-                }),
-              ),
-
-              // 2. 🎨 Lớp gạch ngang chiến thắng đè lên trên cùng khi trò chơi kết thúc
-              if (boDieuKhien.troChoiKetThuc &&
-                  boDieuKhien.diemDauThang != null &&
-                  boDieuKhien.diemCuoiThang != null)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: CustomPaint(
-                      painter: VeDuongThangThangCuoc(
-                        diemDau: boDieuKhien.diemDauThang!,
-                        diemCuoi: boDieuKhien.diemCuoiThang!,
-                        kichThuocBanCo: kichThuoc,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
+                children: List.generate(kichThuoc, (cot) => WidgetOCo(
+                  trangThai: banCo[hang][cot],
+                  kichThuoc: kichThuocOCo,
+                  khiNhan: () => khiChonO(hang, cot),
+                )),
+              )),
+            ),
+            if (troChoiKetThuc && diemDauThang != null && diemCuoiThang != null)
+              Positioned.fill(child: IgnorePointer(child: CustomPaint(
+                painter: VeDuongThangThangCuoc(diemDau: diemDauThang!, diemCuoi: diemCuoiThang!, kichThuocBanCo: kichThuoc),
+              ))),
+          ]),
         ),
       ),
     );

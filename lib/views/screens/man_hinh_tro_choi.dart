@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../controllers/dieu_khien_tro_choi.dart';
-import '../../utils/am_thanh_helper.dart';
+import '../../controllers/dieu_khien_am_thanh.dart';
+import '../../core/enums/loai_nguoi_choi.dart';
 import '../widgets/widget_ban_co.dart';
 import '../widgets/widget_thanh_dau.dart';
 
@@ -20,6 +21,7 @@ class ManHinhTroChoi extends StatefulWidget {
 
 class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
   late DieuKhienTroChoi _boDieuKhien;
+  final DieuKhienAmThanh _amThanh = DieuKhienAmThanh();
   bool _daHienThiDialog = false;
 
   static const Color xanhDam = Color(0xFF1765C5);
@@ -76,7 +78,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                       ),
                       onPressed: () {
-                        AmThanhHelper.phatAmThanh('GenericClick.mp3');
+                        _amThanh.phatAmThanh('GenericClick.mp3');
                         Navigator.pop(context);
                       },
                       child: const Text(
@@ -104,7 +106,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                         ),
                       ),
                       onPressed: () {
-                        AmThanhHelper.phatAmThanh('GenericClick.mp3');
+                        _amThanh.phatAmThanh('GenericClick.mp3');
                         Navigator.pop(context);
                         setState(() {
                           _daHienThiDialog = false;
@@ -203,7 +205,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                                   size: 26,
                                 ),
                                 onPressed: () {
-                                  AmThanhHelper.phatAmThanh('GenericClick.mp3');
+                                  _amThanh.phatAmThanh('GenericClick.mp3');
                                   Navigator.pop(context);
                                 },
                               ),
@@ -214,14 +216,14 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                                   color: const Color(0xFFEAF5FF).withOpacity(0.95),
                                   shape: const CircleBorder(),
                                   child: IconButton(
-                                    tooltip: AmThanhHelper.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
+                                    tooltip: _amThanh.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
                                     icon: Icon(
-                                      AmThanhHelper.dangTatNhacNen ? Icons.music_off_rounded : Icons.music_note_rounded,
+                                      _amThanh.dangTatNhacNen ? Icons.music_off_rounded : Icons.music_note_rounded,
                                       color: xanhDam,
                                       size: 20,
                                     ),
                                     onPressed: () {
-                                      AmThanhHelper.toggleNhacNen();
+                                      _amThanh.toggleNhacNen();
                                       setState(() {});
                                     },
                                   ),
@@ -231,14 +233,14 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                                   color: const Color(0xFFEAF5FF).withOpacity(0.95),
                                   shape: const CircleBorder(),
                                   child: IconButton(
-                                    tooltip: AmThanhHelper.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
+                                    tooltip: _amThanh.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
                                     icon: Icon(
-                                      AmThanhHelper.dangTatTiengClick ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                                      _amThanh.dangTatTiengClick ? Icons.volume_off_rounded : Icons.volume_up_rounded,
                                       color: xanhDam,
                                       size: 20,
                                     ),
                                     onPressed: () {
-                                      AmThanhHelper.toggleTiengClick();
+                                      _amThanh.toggleTiengClick();
                                       setState(() {});
                                     },
                                   ),
@@ -256,7 +258,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                                     ),
                                   ),
                                   onSelected: (value) {
-                                    AmThanhHelper.phatAmThanh('GenericClick.mp3');
+                                    _amThanh.phatAmThanh('GenericClick.mp3');
                                     if (value == 'new_game') {
                                       setState(() {
                                         _daHienThiDialog = false;
@@ -301,14 +303,28 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                       ],
                     ),
                   ),
-                  WidgetThanhDau(boDieuKhien: _boDieuKhien),
+                  WidgetThanhDau(
+                    tenNguoiChoi1: _boDieuKhien.nguoiChoi1.tenHienThi,
+                    tenNguoiChoi2: _boDieuKhien.nguoiChoi2.tenHienThi,
+                    diemNguoiChoi1: _boDieuKhien.nguoiChoi1.diemSo,
+                    diemNguoiChoi2: _boDieuKhien.nguoiChoi2.diemSo,
+                    nguoiChoi1LaX: _boDieuKhien.nguoiChoi1.loaiQuan == LoaiNguoiChoi.x,
+                    luotNguoiChoi1: _boDieuKhien.luotHienTai == _boDieuKhien.nguoiChoi1,
+                    thoiGianConLai: _boDieuKhien.thoiGianConLai,
+                  ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Center(
                         child: FittedBox(
                           fit: BoxFit.contain,
-                          child: WidgetBanCo(boDieuKhien: _boDieuKhien),
+                          child: WidgetBanCo(
+                            banCo: _boDieuKhien.banCo,
+                            troChoiKetThuc: _boDieuKhien.troChoiKetThuc,
+                            diemDauThang: _boDieuKhien.diemDauThang,
+                            diemCuoiThang: _boDieuKhien.diemCuoiThang,
+                            khiChonO: _boDieuKhien.xuLyNuocDi,
+                          ),
                         ),
                       ),
                     ),
@@ -357,7 +373,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                                 ),
                               ),
                               onPressed: () {
-                                AmThanhHelper.phatAmThanh('GenericClick.mp3');
+                                _amThanh.phatAmThanh('GenericClick.mp3');
                                 if (_boDieuKhien.troChoiKetThuc) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

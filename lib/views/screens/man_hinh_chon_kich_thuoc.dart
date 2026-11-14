@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/am_thanh_helper.dart';
+import '../../controllers/dieu_khien_am_thanh.dart';
 import 'man_hinh_tro_choi.dart';
 
 class ManHinhChonKichThuoc extends StatefulWidget {
@@ -13,6 +13,7 @@ class ManHinhChonKichThuoc extends StatefulWidget {
 }
 
 class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
+  final DieuKhienAmThanh _amThanh = DieuKhienAmThanh();
   static const Color xanhDam = Color(0xFF1765C5);
   static const Color xanh = Color(0xFF3198F5);
 
@@ -55,7 +56,7 @@ class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
                           size: 28,
                         ),
                         onPressed: () {
-                          AmThanhHelper.phatAmThanh('GenericClick.mp3');
+                          _amThanh.phatAmThanh('GenericClick.mp3');
                           Navigator.pop(context);
                         },
                       ),
@@ -77,14 +78,14 @@ class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
                       color: const Color(0xFFEAF5FF).withOpacity(0.95),
                       shape: const CircleBorder(),
                       child: IconButton(
-                        tooltip: AmThanhHelper.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
+                        tooltip: _amThanh.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
                         icon: Icon(
-                          AmThanhHelper.dangTatNhacNen ? Icons.music_off_rounded : Icons.music_note_rounded,
+                          _amThanh.dangTatNhacNen ? Icons.music_off_rounded : Icons.music_note_rounded,
                           color: xanhDam,
                           size: 22,
                         ),
                         onPressed: () {
-                          AmThanhHelper.toggleNhacNen();
+                          _amThanh.toggleNhacNen();
                           setState(() {});
                         },
                       ),
@@ -94,14 +95,14 @@ class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
                       color: const Color(0xFFEAF5FF).withOpacity(0.95),
                       shape: const CircleBorder(),
                       child: IconButton(
-                        tooltip: AmThanhHelper.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
+                        tooltip: _amThanh.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
                         icon: Icon(
-                          AmThanhHelper.dangTatTiengClick ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                          _amThanh.dangTatTiengClick ? Icons.volume_off_rounded : Icons.volume_up_rounded,
                           color: xanhDam,
                           size: 22,
                         ),
                         onPressed: () {
-                          AmThanhHelper.toggleTiengClick();
+                          _amThanh.toggleTiengClick();
                           setState(() {});
                         },
                       ),
@@ -168,7 +169,7 @@ class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
             ),
           ),
           onPressed: () {
-            AmThanhHelper.phatAmThanh('GenericClick.mp3');
+            _amThanh.phatAmThanh('GenericClick.mp3');
             Navigator.push(
               context,
               MaterialPageRoute(

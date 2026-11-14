@@ -1,5 +1,6 @@
 import '../core/enums/loai_nguoi_choi.dart';
 
+/// Model lưu thông tin và điểm số của một người chơi.
 class NguoiChoiModel {
   final String maSo;
   final String tenHienThi;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../utils/am_thanh_helper.dart';
+import '../../controllers/dieu_khien_am_thanh.dart';
 import 'man_hinh_chon_kich_thuoc.dart';
 
 class ManHinhMenu extends StatefulWidget {
@@ -10,10 +10,11 @@ class ManHinhMenu extends StatefulWidget {
 }
 
 class _ManHinhMenuState extends State<ManHinhMenu> {
+  final DieuKhienAmThanh _amThanh = DieuKhienAmThanh();
   @override
   void initState() {
     super.initState();
-    AmThanhHelper.phatNhacNen('PG_4_vol0.15.mp3');
+    _amThanh.phatNhacNen('PG_4_vol0.15.mp3');
   }
 
   static const Color xanhDam = Color(0xFF1765C5);
@@ -52,14 +53,14 @@ class _ManHinhMenuState extends State<ManHinhMenu> {
                       color: const Color(0xFFEAF5FF).withOpacity(0.95),
                       shape: const CircleBorder(),
                       child: IconButton(
-                        tooltip: AmThanhHelper.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
+                        tooltip: _amThanh.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
                         icon: Icon(
-                          AmThanhHelper.dangTatNhacNen ? Icons.music_off_rounded : Icons.music_note_rounded,
+                          _amThanh.dangTatNhacNen ? Icons.music_off_rounded : Icons.music_note_rounded,
                           color: xanhDam,
                           size: 24,
                         ),
                         onPressed: () {
-                          AmThanhHelper.toggleNhacNen();
+                          _amThanh.toggleNhacNen();
                           setState(() {});
                         },
                       ),
@@ -69,14 +70,14 @@ class _ManHinhMenuState extends State<ManHinhMenu> {
                       color: const Color(0xFFEAF5FF).withOpacity(0.95),
                       shape: const CircleBorder(),
                       child: IconButton(
-                        tooltip: AmThanhHelper.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
+                        tooltip: _amThanh.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
                         icon: Icon(
-                          AmThanhHelper.dangTatTiengClick ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                          _amThanh.dangTatTiengClick ? Icons.volume_off_rounded : Icons.volume_up_rounded,
                           color: xanhDam,
                           size: 24,
                         ),
                         onPressed: () {
-                          AmThanhHelper.toggleTiengClick();
+                          _amThanh.toggleTiengClick();
                           setState(() {});
                         },
                       ),
@@ -149,7 +150,7 @@ class _ManHinhMenuState extends State<ManHinhMenu> {
           ),
         ),
         onPressed: () {
-          AmThanhHelper.phatAmThanh('GenericClick.mp3');
+          _amThanh.phatAmThanh('GenericClick.mp3');
           Navigator.push(
             context,
             MaterialPageRoute(
