@@ -46,7 +46,7 @@ class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
                 child: Row(
                   children: [
                     Material(
-                      color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                      color: const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                       shape: const CircleBorder(),
                       child: IconButton(
                         tooltip: 'Quay lại',
@@ -75,7 +75,7 @@ class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
                       ),
                     ),
                     Material(
-                      color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                      color: const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                       shape: const CircleBorder(),
                       child: IconButton(
                         tooltip: _amThanh.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
@@ -92,7 +92,7 @@ class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
                     ),
                     const SizedBox(width: 4),
                     Material(
-                      color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                      color: const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                       shape: const CircleBorder(),
                       child: IconButton(
                         tooltip: _amThanh.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
@@ -155,7 +155,7 @@ class _ManHinhChonKichThuocState extends State<ManHinhChonKichThuoc> {
         height: 70,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFF9FCFF).withOpacity(0.97),
+            backgroundColor: const Color(0xFFF9FCFF).withValues(alpha: 0.97),
             foregroundColor: xanhDam,
             elevation: 5,
             shadowColor: const Color(0x553B8DE5),

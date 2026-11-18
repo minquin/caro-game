@@ -195,7 +195,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Material(
-                              color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                              color: const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                               shape: const CircleBorder(),
                               child: IconButton(
                                 tooltip: 'Quay lại',
@@ -213,7 +213,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                             Row(
                               children: [
                                 Material(
-                                  color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                                  color: const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                                   shape: const CircleBorder(),
                                   child: IconButton(
                                     tooltip: _amThanh.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
@@ -230,7 +230,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                                 ),
                                 const SizedBox(width: 4),
                                 Material(
-                                  color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                                  color: const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                                   shape: const CircleBorder(),
                                   child: IconButton(
                                     tooltip: _amThanh.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
@@ -249,7 +249,7 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                                 PopupMenuButton<String>(
                                   icon: Material(
                                     color:
-                                        const Color(0xFFEAF5FF).withOpacity(0.95),
+                                        const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                                     shape: const CircleBorder(),
                                     child: const Padding(
                                       padding: EdgeInsets.all(8.0),
@@ -335,13 +335,13 @@ class _ManHinhTroChoiState extends State<ManHinhTroChoi> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                        color: const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                             color: const Color(0xFF9CCBFF), width: 1.5),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),

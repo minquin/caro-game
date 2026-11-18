@@ -50,7 +50,7 @@ class _ManHinhMenuState extends State<ManHinhMenu> {
                 child: Row(
                   children: [
                     Material(
-                      color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                      color: const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                       shape: const CircleBorder(),
                       child: IconButton(
                         tooltip: _amThanh.dangTatNhacNen ? 'Bật Nhạc Nền' : 'Tắt Nhạc Nền',
@@ -67,7 +67,7 @@ class _ManHinhMenuState extends State<ManHinhMenu> {
                     ),
                     const SizedBox(width: 8),
                     Material(
-                      color: const Color(0xFFEAF5FF).withOpacity(0.95),
+                      color: const Color(0xFFEAF5FF).withValues(alpha: 0.95),
                       shape: const CircleBorder(),
                       child: IconButton(
                         tooltip: _amThanh.dangTatTiengClick ? 'Bật Tiếng Click' : 'Tắt Tiếng Click',
@@ -142,7 +142,7 @@ class _ManHinhMenuState extends State<ManHinhMenu> {
           backgroundColor: mau,
           foregroundColor: trang,
           elevation: 9,
-          shadowColor: mau.withOpacity(0.45),
+          shadowColor: mau.withValues(alpha: 0.45),
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28),
@@ -164,7 +164,7 @@ class _ManHinhMenuState extends State<ManHinhMenu> {
               width: 58,
               height: 58,
               decoration: BoxDecoration(
-                color: trang.withOpacity(0.20),
+                color: trang.withValues(alpha: 0.20),
                 borderRadius: BorderRadius.circular(18),
               ),
               child: Icon(icon, size: 34, color: trang),

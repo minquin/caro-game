@@ -41,7 +41,7 @@ class WidgetThanhDau extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
+                  color: Colors.white.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: const Color(0xFF9CCBFF), width: 1.5),
                 ),
@@ -66,10 +66,10 @@ class WidgetThanhDau extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.92),
+        color: Colors.white.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: laLuotHienTai ? mau : const Color(0xFFBBD9F7), width: laLuotHienTai ? 2.5 : 1.5),
-        boxShadow: [if (laLuotHienTai) BoxShadow(color: mau.withOpacity(0.25), blurRadius: 8, spreadRadius: 1)],
+        boxShadow: [if (laLuotHienTai) BoxShadow(color: mau.withValues(alpha: 0.25), blurRadius: 8, spreadRadius: 1)],
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Icon(laQuanX ? Icons.close_rounded : Icons.circle_outlined, color: mau, size: 22),
